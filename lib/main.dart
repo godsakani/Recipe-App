@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget
         fontFamily: "Brand Bold",
         primarySwatch: Colors.blue,
       ),
-      initialRoute: LoginScreen.idScreen,
+      initialRoute: FirebaseAuth.instance.currentUser == null ? LoginScreen.idScreen : MainScreen.idScreen,
       routes:
       {
         RegistrationScreen.idScreen:(context)=>RegistrationScreen(),

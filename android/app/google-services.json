@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "997893605382",
+    "project_id": "recipe-app-2339c",
+    "storage_bucket": "recipe-app-2339c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:997893605382:android:d2155b9dc8549b62901b87",
+        "android_client_info": {
+          "package_name": "com.example.recipeapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "997893605382-6h306bbf5f1fu6sijmc19u5qablp61u2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAy-s_qFMpvDgfMtj8H8lZG9sZ3-3K6oj0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "997893605382-6h306bbf5f1fu6sijmc19u5qablp61u2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

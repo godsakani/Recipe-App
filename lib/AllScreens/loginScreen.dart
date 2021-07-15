@@ -1,10 +1,18 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:recipe_app/AllScreens/mainscreen.dart';
 import 'package:recipe_app/AllScreens/registrationScreen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:recipe_app/AllWidgets/progressDialogue.dart';
+
+import '../main.dart';
 
 class LoginScreen extends StatelessWidget
 {
   static const String idScreen = "login";
+  TextEditingController emailTextEditingController = TextEditingController();
+  TextEditingController passwordTextEditingController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,6 +47,7 @@ class LoginScreen extends StatelessWidget
                   children: [
                     SizedBox(height: 1.0,),
                     TextField(
+                      controller: emailTextEditingController,
                       keyboardType: TextInputType.emailAddress,
                       decoration: InputDecoration(
                         labelText: "Email",
@@ -56,6 +65,7 @@ class LoginScreen extends StatelessWidget
                     ),
                     SizedBox(height: 1.0,),
                     TextField(
+                      controller: passwordTextEditingController,
                       obscureText: true,
                       decoration: InputDecoration(
                         labelText: "Password",
@@ -93,7 +103,18 @@ class LoginScreen extends StatelessWidget
                         borderRadius: new BorderRadius.circular(24.0),
                       ),
                       onPressed: () {
-                        print("Welcome");
+                        if(!emailTextEditingController.text.contains("@"))
+                        {
+                          displayToastMessage("email must contain @ character", context);
+                        }
+                        else if(passwordTextEditingController.text.isEmpty)
+                        {
+                          displayToastMessage("password required", context);
+                        }
+                        else
+                          {
+                            loginUser(context);
+                          }
                       },
                     ),
                   ],
@@ -113,5 +134,49 @@ class LoginScreen extends StatelessWidget
         ),
       ),
     );
+  }
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  void loginUser(BuildContext context) async
+  {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context)
+      {
+       return ProgressDialogue(message: "Authenticating Please wait.....",);
+      }
+    );
+
+    final  firebaseUser = (await _firebaseAuth
+        .signInWithEmailAndPassword(
+        email: emailTextEditingController.text,
+        password: passwordTextEditingController.text)
+        .catchError((errMsg){
+          Navigator.pop(context);
+           displayToastMessage("Error: " + errMsg.toString() , context);
+    })).user;
+
+    if(firebaseUser != null)//user created
+        {
+      usersRef.child(firebaseUser.uid).once().then((DataSnapshot snap){
+        if(snap.value !=null){
+          Navigator.pushNamedAndRemoveUntil(context, MainScreen.idScreen, (route) => false);
+          displayToastMessage("Login Successful", context);
+
+        }
+        else
+          {
+            Navigator.pop(context);
+            _firebaseAuth.signOut();
+            displayToastMessage("Account Does Not Exist. Please create new Account", context);
+          }
+      });
+
+    }
+    else
+    {
+      Navigator.pop(context);
+      displayToastMessage("Error occured, can not signin", context);
+    }
   }
 }

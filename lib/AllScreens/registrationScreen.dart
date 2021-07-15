@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:recipe_app/AllScreens/loginScreen.dart';
 import 'package:recipe_app/AllScreens/mainscreen.dart';
+import 'package:recipe_app/AllWidgets/progressDialogue.dart';
 import 'package:recipe_app/main.dart';
 
 class RegistrationScreen extends StatelessWidget
@@ -181,10 +182,21 @@ class RegistrationScreen extends StatelessWidget
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   void registerNewUser(BuildContext context) async
   {
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context)
+        {
+          return ProgressDialogue(message: "Registering Please wait.....",);
+        }
+    );
+
     final  firebaseUser = (await _firebaseAuth
         .createUserWithEmailAndPassword(
         email: emailTextEditingController.text,
-        password: passwordTextEditingController.text).catchError((errMsg){
+        password: passwordTextEditingController.text)
+        .catchError((errMsg){
+           Navigator.pop(context);
           displayToastMessage("Error: " + errMsg.toString() , context);
     })).user;
     if(firebaseUser != null)//user created
@@ -203,7 +215,7 @@ class RegistrationScreen extends StatelessWidget
       }
     else
       {
-        //error ocure-display error message
+        Navigator.pop(context);
         displayToastMessage("New user Account has not yet been Created", context);
       }
   }
